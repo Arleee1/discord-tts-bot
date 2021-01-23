@@ -70,7 +70,7 @@ client.on('ready', () => {
   function server_handler(req, res){
     res.end("server is operational")
 
-    if (serverIsReady){
+    if (true){
       if(req.url.substr(0,10) !== "/disc_tts/"){
         return
       }
