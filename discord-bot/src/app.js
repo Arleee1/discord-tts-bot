@@ -65,6 +65,7 @@ client.on('ready', () => {
 
   //NOTE - The HTTP module seems to call the handler twice, so this only calls it every other time. Solution works for now, however a better one might be better for the future
   //If something breaks, remove the alternating code first
+  //Alternating code is currnetly removed
   var serverIsReady = true
 
   function server_handler(req, res){

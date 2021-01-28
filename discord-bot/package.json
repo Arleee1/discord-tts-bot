@@ -24,7 +24,10 @@
     "@greencoast/logger": "^1.0.1",
     "axios": "^0.21.1",
     "discord.js": "^12.5.1",
-    "google-tts-api": "^2.0.0"
+    "fs": "0.0.1-security",
+    "fs-extra": "^9.0.1",
+    "google-tts-api": "^2.0.0",
+    "http": "0.0.1-security"
   },
   "bugs": {
     "url": "https://github.com/moonstar-x/discord-tts-bot/issues"
