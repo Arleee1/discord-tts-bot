@@ -60,28 +60,28 @@ class ExtendedClient extends Client {
     return process.argv.includes('--debug');
   }
 
-  tts_say(channel_id, words) {
-    //Says the words using TTS in the channel specified by the ID in "../config/channel_data.json"
-    //Param: words - words to be said in the channel
-  
-    //Gets the channel object from the ID specified in "../config/channel_data.json", and calls channel_callback, passing the channel object as a parameter
-    this.channels.fetch(channel_id)
+  tts_say(channelID, words) {
+    // Says the words using TTS in the channel specified by the ID in "../config/channel_data.json"
+    // Param: words - words to be said in the channel
+
+    // Gets the channel object from the ID specified in "../config/channel_data.json", and calls channel_callback, passing the channel object as a parameter
+    this.channels.fetch(channelID)
       .then(channel_callback);
 
-    //Plays the TTS
-    //Param: channel - the voice channel object where the TTS will play
-    function channel_callback(channel){
+    // Plays the TTS
+    // Param: channel - the voice channel object where the TTS will play
+    function channel_callback(channel) {
       const { ttsPlayer, name: guildName, voice } = channel.guild;
       const connection = voice ? voice.connection : null;
 
 
       if (!channel) {
-        //message.reply('you need to be in a voice channel first.');
+        // message.reply('you need to be in a voice channel first.');
         return;
       }
 
       if (!channel.joinable) {
-        //message.reply('I cannot join your voice channel.');
+        // message.reply('I cannot join your voice channel.');
         return;
       }
 
@@ -91,13 +91,43 @@ class ExtendedClient extends Client {
         channel.join()
           .then(() => {
             logger.info(`Joined ${channel.name} in ${guildName}.`);
-            //message.channel.send(`Joined ${channel}.`);
+            // message.channel.send(`Joined ${channel}.`);
             ttsPlayer.say(words);
           })
           .catch((error) => {
             throw error;
           });
       }
+    }
+  }
+  async playMusic(VCChannelID, musicChannelId, song) {
+    // Says the words using TTS in the channel specified by the ID in "../config/channel_data.json"
+    // Param: words - words to be said in the channel
+
+    // Gets the channel object from the ID specified in "../config/channel_data.json", and calls channel_callback, passing the channel object as a parameter
+    let VCChannel = await this.channels.fetch(VCChannelID);
+    let musicChannel = await this.channels.fetch(musicChannelId);
+    const { name: guildName, voice } = VCChannel.guild;
+    const connection = voice ? voice.connection : null;
+
+    if (!VCChannel.joinable) {
+      // message.reply('I cannot join your voice channel.');
+      return;
+    }
+
+    if (connection) {
+      // send msg
+      musicChannel.send(`!p ${song}`);
+    } else {
+      VCChannel.join()
+        .then(() => {
+          logger.info(`Joined ${VCChannel.name} in ${guildName}.`);
+          // message.channel.send(`Joined ${channel}.`);
+          musicChannel.send(`$botify play ${song}`);
+        })
+        .catch((error) => {
+          throw error;
+        });
     }
   }
 }
