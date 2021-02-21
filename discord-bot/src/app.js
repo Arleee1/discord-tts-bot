@@ -2,11 +2,11 @@ const { Structures } = require('discord.js');
 const logger = require('@greencoast/logger');
 const { discordToken, prefix } = require('./common/settings');
 const { TTSGuild, ExtendedClient } = require('./classes/extensions');
-const fse = require("fs-extra")
-const fs = require("fs")
-const channel_data = require("../config/channel_data.json")
-const http = require("http")
-const URL = require("url").URL
+// const fse = require('fs-extra');
+// const fs = require('fs');
+const channelData = require('../config/channelData.json');
+const http = require('http');
+// const URL = require('url').URL;
 // Get channel and guild id within discord by right clicking on channel/server
 
 Structures.extend('Guild', TTSGuild);
@@ -60,27 +60,28 @@ client.on('invalidated', () => {
 client.on('ready', () => {
   logger.info('Connected to Discord! - Ready.');
   client.updatePresence();
-  server = http.createServer(server_handler)
-  server.listen(8000)
+  const server = http.createServer(serverHandler);
+  server.listen(8000);
 
-  //NOTE - The HTTP module seems to call the handler twice, so this only calls it every other time. Solution works for now, however a better one might be better for the future
-  //If something breaks, remove the alternating code first
-  //Alternating code is currnetly removed
-  var serverIsReady = true
+  // NOTE - The HTTP module seems to call the handler twice, so this only calls it every other time. Solution works for now, however a better one might be better for the future
+  // If something breaks, remove the alternating code first
+  let serverIsReady = true;
 
-  function server_handler(req, res){
-    res.end("server is operational")
+  function serverHandler(req, res) {
+    res.end('server is operational');
 
-    if (true){
-      if(req.url.substr(0,10) !== "/disc_tts/"){
-        return
+    if (true) {
+      if (req.url.substr(0, 10) === '/disc_tts/') {
+        console.log(`server requested with url of: ${req.url}`);
+        const words = decodeURIComponent(req.url.substr(10));
+        client.tts_say(channelData.VC_ID, words);
+        console.log(`saying ${words}`);
+      } else if (req.url.substr(0, 12) === '/disc_music/') {
+        // client.channels.cache.get(channelData.MUSIC_ID).send(`!p ${req.url.substr(12)}`);
+        client.playMusic(channelData.VC_ID, channelData.MUSIC_ID, req.url.substr(12));
       }
-      console.log(`server requested with url of: ${req.url}`)
-      words = decodeURIComponent(req.url.substr(10))
-      client.tts_say(channel_data.id, words)
-      console.log(`saying ${words}`)
     }
-    serverIsReady = !serverIsReady
+    serverIsReady = !serverIsReady;
   }
 });
 
